@@ -1,0 +1,13 @@
+﻿@model List<Logins>
+
+@foreach (var login in Model)
+{
+   <form asp-action="ForceLogout" asp-controller="Home" method="post">
+      <input type="hidden" name="userId" value="@(login.Name)" />
+      <div>
+         <div>
+            @login.Name <button type="submit" class="btn btn-link btn-sm">Deslogar</button>
+         </div>
+      </div>
+   </form>
+}
