@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+
 using StackExchange.Redis;
 using System.Diagnostics;
 using WebAppDocker.Models;
@@ -9,8 +11,27 @@ namespace WebAppDocker.Controllers
     [Authorize()]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IDistributedCache Cache { get; }
+
+        public HomeController(IDistributedCache cache)
         {
+            Cache = cache;
+        }
+
+        public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
+        {
+            ViewBag.DateTimeNow = await Cache.GetOrSetAsync("DateTimeNow",
+                async () => await Task.FromResult(DateTime.Now),
+                options: new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(30),
+                });
+            ViewBag.Source = await Cache.GetOrSetAsync("Source",
+                async () => await Task.FromResult(Source.Create(Faker.Name.FullName())),
+                options: new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(30),
+                });
             return View();
         }
 

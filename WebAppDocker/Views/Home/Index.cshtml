@@ -1,5 +1,6 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+   ViewData["Title"] = "Home Page";
+   Source source = (Source)ViewBag?.Source;
 }
 
 <div class="text-center">
@@ -13,4 +14,15 @@
       <p>@User.Identity.Name</p>
       <button type="submit" class="btn btn-sm btn-success">Sair</button>
    </form>
+}
+
+<div>
+   <h1>@ViewBag.DateTimeNow</h1>
+</div>
+@if (source != null)
+{
+   <div>
+      <h1>@source.Id</h1>
+      <h1>@source.Name</h1>
+   </div>
 }
